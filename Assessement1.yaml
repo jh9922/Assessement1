@@ -37,10 +37,10 @@
         create: yes
 
     - name: Copy WAR file to Tomcat webapps directory
-      copy:
+      synchronize:
         src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
-        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
-        remote_src: yes
+        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/addressbook-2.0.war"
+        mode: push
         become: true
 
     - name: Restart Apache Tomcat
