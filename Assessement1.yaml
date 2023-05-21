@@ -1,25 +1,21 @@
+---
 - hosts: tomcatserver
   gather_facts: no
 
   tasks:
-    - name: Update apt cache
-      become: true
-      apt:
-        update_cache: yes
-
-    - name: Install Java JDK
+    - name: Install default-jdk package
       become: true
       apt:
         name: default-jdk
         state: present
 
-    - name: Download Tomcat tar.gz file
+    - name: Download Apache Tomcat
       become: true
       get_url:
         url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz"
         dest: "/tmp/apache-tomcat-9.0.75.tar.gz"
 
-    - name: Extract Tomcat tar.gz file
+    - name: Extract Apache Tomcat
       become: true
       unarchive:
         src: "/tmp/apache-tomcat-9.0.75.tar.gz"
@@ -27,27 +23,30 @@
         remote_src: yes
 
     - name: Set CATALINA_HOME environment variable
+      become: true
       lineinfile:
-        dest: "~/.bashrc"
+        path: "$HOME/.bashrc"
         line: "export CATALINA_HOME=/opt/tomcat"
-        insertafter: EOF
+        create: yes
 
     - name: Set PATH environment variable
+      become: true
       lineinfile:
-        dest: "~/.bashrc"
+        path: "$HOME/.bashrc"
         line: "export PATH=$PATH:$CATALINA_HOME/bin"
-        insertafter: EOF
+        create: yes
 
-    - name: Reload bashrc
+    - name: Start Apache Tomcat
       become: true
-      shell: "source ~/.bashrc"
+      command: "/opt/tomcat/bin/startup.sh"
 
-    - name: Copy WAR file to tomcatserver
-      become: true
+    - name: Copy WAR file to Tomcat webapps directory
       copy:
         src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
         dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
+        remote_src: yes
+        become: true
 
-    - name: Restart Tomcat
+    - name: Restart Apache Tomcat
       become: true
-      shell: "/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh"
+      command: "/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh"
