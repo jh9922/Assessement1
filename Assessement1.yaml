@@ -1,11 +1,9 @@
 ---
 - hosts: tomcatserver
   gather_facts: no
-- name: Copy WAR file to tomcatserver
-  copy:
-    src: ~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war
-    dest: /opt/tomcat/apache-tomcat-9.0.75/webapps
-- name: Deploy WAR file to Tomcat
-  command: /opt/tomcat/bin/startup.sh
-- name: Restart Tomcat
-  command: /opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+
+  tasks:
+    - name: Copy WAR file to tomcatserver
+      copy:
+        src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
+        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
