@@ -20,20 +20,20 @@
 
     - name: Set CATALINA_HOME environment variable
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "/root/.bashrc"
         line: "export CATALINA_HOME=/opt/tomcat"
         insertafter: EOF
         state: present
 
     - name: Set PATH environment variable
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "/root/.bashrc"
         line: "export PATH=$PATH:$CATALINA_HOME/bin"
         insertafter: EOF
         state: present
 
     - name: Reload bashrc
-      shell: source "{{ ansible_env.HOME }}/.bashrc"
+      shell: source "/root/.bashrc"
       args:
         executable: /bin/bash
 
