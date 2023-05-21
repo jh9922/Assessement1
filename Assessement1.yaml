@@ -36,10 +36,6 @@
         line: "export PATH=$PATH:$CATALINA_HOME/bin"
         create: yes
 
-    - name: Start Apache Tomcat
-      become: true
-      command: "/opt/tomcat/bin/startup.sh"
-
     - name: Copy WAR file to Tomcat webapps directory
       copy:
         src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
