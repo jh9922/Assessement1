@@ -1,48 +1,47 @@
----
 - hosts: tomcatserver
   gather_facts: no
 
   tasks:
     - name: Install default-jdk package
-      become: true
       apt:
         name: default-jdk
         state: present
 
     - name: Download Apache Tomcat
-      become: true
       get_url:
         url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz"
         dest: "/tmp/apache-tomcat-9.0.75.tar.gz"
 
     - name: Extract Apache Tomcat
-      become: true
       unarchive:
         src: "/tmp/apache-tomcat-9.0.75.tar.gz"
         dest: "/opt/tomcat"
         remote_src: yes
 
     - name: Set CATALINA_HOME environment variable
-      become: true
       lineinfile:
-        path: "$HOME/.bashrc"
+        path: "{{ ansible_env.HOME }}/.bashrc"
         line: "export CATALINA_HOME=/opt/tomcat"
-        create: yes
+        insertafter: EOF
+        state: present
 
     - name: Set PATH environment variable
-      become: true
       lineinfile:
-        path: "$HOME/.bashrc"
+        path: "{{ ansible_env.HOME }}/.bashrc"
         line: "export PATH=$PATH:$CATALINA_HOME/bin"
-        create: yes
+        insertafter: EOF
+        state: present
+
+    - name: Reload bashrc
+      shell: source "{{ ansible_env.HOME }}/.bashrc"
+      args:
+        executable: /bin/bash
 
     - name: Copy WAR file to Tomcat webapps directory
       synchronize:
         src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
-        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/addressbook-2.0.war"
-        mode: push
-        become: true
+        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
+        delegate_to: localhost
 
-    - name: Restart Apache Tomcat
-      become: true
-      command: "/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh"
+    - name: Restart Tomcat
+      command: "/opt/tomcat/apache-tomcat-9.0.75/bin/shutdown.sh && /opt/tomcat/apache-tomcat-9.0.75/bin/startup.sh"
