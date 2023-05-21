@@ -38,10 +38,9 @@
         executable: /bin/bash
 
     - name: Copy WAR file to Tomcat webapps directory
-      synchronize:
+      copy:
         src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
         dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
-        delegate_to: localhost
 
     - name: Restart Tomcat
       command: "/opt/tomcat/apache-tomcat-9.0.75/bin/shutdown.sh && /opt/tomcat/apache-tomcat-9.0.75/bin/startup.sh"
