@@ -4,10 +4,7 @@ pipeline {
     stages {
         stage('Run Ansible Playbook') {
             steps {
-                ansiblePlaybook(
-                    playbook: 'Assessement1.yaml',
-                    become: true
-                )
+                sh 'ansible-playbook Assessement1.yaml'
             }
         }
     }
