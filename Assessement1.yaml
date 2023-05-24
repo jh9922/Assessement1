@@ -1,46 +1,47 @@
 - hosts: tomcatserver
   gather_facts: no
 
-  tasks:
+tasks:
     - name: Install default-jdk package
       apt:
         name: default-jdk
         state: present
 
-    - name: Download Apache Tomcat
+- name: Download Apache Tomcat
       get_url:
-        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz"
-        dest: "/tmp/apache-tomcat-9.0.75.tar.gz"
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz
+        dest: /tmp/apache-tomcat-9.0.75.tar.gz
 
-    - name: Extract Apache Tomcat
+- name: Extract Apache Tomcat
       unarchive:
-        src: "/tmp/apache-tomcat-9.0.75.tar.gz"
-        dest: "/opt/tomcat"
+        src: /tmp/apache-tomcat-9.0.75.tar.gz
+        dest: /opt/tomcat
         remote_src: yes
 
-    - name: Set CATALINA_HOME environment variable
+- name: Set CATALINA_HOME environment variable
       lineinfile:
-        path: "/root/.bashrc"
-        line: "export CATALINA_HOME=/opt/tomcat"
+        path: /root/.bashrc
+        line: export CATALINA_HOME=/opt/tomcat/apache-tomcat-9.0.75
         insertafter: EOF
         state: present
 
-    - name: Set PATH environment variable
+- name: Set PATH environment variable
       lineinfile:
-        path: "/root/.bashrc"
-        line: "export PATH=$PATH:$CATALINA_HOME/bin"
+        path: /root/.bashrc
+        line: export PATH=$PATH:$CATALINA_HOME/bin
         insertafter: EOF
         state: present
 
-    - name: Reload bashrc
+- name: Reload bashrc
       shell: source "/root/.bashrc"
       args:
         executable: /bin/bash
 
-    - name: Copy WAR file to Tomcat webapps directory
+- name: Copy WAR file to Tomcat webapps directory
       copy:
-        src: "~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war"
-        dest: "/opt/tomcat/apache-tomcat-9.0.75/webapps/"
+        src: ~/.jenkins/workspace/Assessement1/target/addressbook-2.0.war
+        dest: /opt/tomcat/apache-tomcat-9.0.75/webapps/
 
-    - name: Restart Tomcat
-      command: "/opt/tomcat/apache-tomcat-9.0.75/bin/shutdown.sh && /opt/tomcat/apache-tomcat-9.0.75/bin/startup.sh"
+- name: Restart Tomcat
+      command: /opt/tomcat/apache-tomcat-9.0.75/bin/shutdown.sh &&
+        /opt/tomcat/apache-tomcat-9.0.75/bin/startup.sh
